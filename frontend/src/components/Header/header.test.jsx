@@ -14,12 +14,12 @@ const initialState = { cartReducer: { cartSize: 2 } };
 
 const buildStore = configureStore([thunk]);
 
-describe('ItemList', () => {
+describe('Header', () => {
   beforeEach(() => {
     const store = buildStore(initialState);
     store.dispatch = jest.fn();
     // eslint-disable-next-line react/prop-types
-    const Wrapper = ({ children }) => (
+    const wrapper = ({ children }) => (
       <Provider store={store}>
         <BrowserRouter>
           {children}
@@ -27,7 +27,7 @@ describe('ItemList', () => {
       </Provider>
     );
 
-    render(<Header />, { wrapper: Wrapper });
+    render(<Header />, { wrapper });
   });
 
   test('should render the title', () => {
