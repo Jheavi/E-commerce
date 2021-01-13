@@ -8,48 +8,92 @@ jest.mock('axios');
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
-const store = mockStore();
 
 const listUrl = 'http://localhost:2130/';
 const shoppingCartUrl = 'http://localhost:2130/shoppingcart';
 
 describe('FrontEnd actions', () => {
   let fakeData;
-  describe('loadItemsSuccess', () => {
-    test('should return action with type LOAD_ITEMS_LIST', () => {
-      expect(actions.loadItemsSuccess(null).type).toBe(actionTypes.LOAD_ITEMS_LIST);
-    });
+  let fakeError;
+  let store;
+
+  beforeEach(() => {
+    fakeData = { data: { id: 1 } };
+    fakeError = 'error';
+    store = mockStore();
+  });
+
+  afterEach(() => {
+    store = null;
   });
 
   describe('loadItemsList', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       fakeData = { data: { id: 1 } };
-      axios.get.mockImplementationOnce(() => Promise.resolve(fakeData));
-      await store.dispatch(actions.loadItemsList());
     });
 
-    test('should call axios', () => {
+    test('should call axios', async () => {
+      await store.dispatch(actions.loadItemsList());
+
       expect(axios.get).toHaveBeenCalledWith(listUrl);
     });
-  });
 
-  describe('loadItemSuccess', () => {
-    test('should return action with type LOAD_ITEM', () => {
-      expect(actions.loadItemSuccess(null).type).toBe(actionTypes.LOAD_ITEM);
+    test('the store should have an action with type LOAD_ITEMS_LIST', async () => {
+      axios.get = jest.fn().mockResolvedValueOnce(fakeData);
+
+      await store.dispatch(actions.loadItemsList());
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.LOAD_ITEMS_LIST,
+        itemList: fakeData.data,
+      });
+    });
+
+    test('the store should have an action with type LOAD_ITEMS_LIST_ERROR if promise rejected', async () => {
+      axios.get = jest.fn().mockRejectedValueOnce(fakeError);
+
+      await store.dispatch(actions.loadItemsList());
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.LOAD_ITEMS_LIST_ERROR,
+        error: fakeError,
+      });
     });
   });
 
   describe('loadItem', () => {
     let fakeId;
-    beforeEach(async () => {
+    beforeEach(() => {
       fakeData = { data: { id: 1 } };
       fakeId = 1;
-      axios.get.mockImplementationOnce(() => Promise.resolve(fakeData));
-      await store.dispatch(actions.loadItem(fakeId));
     });
 
-    test('should call axios', () => {
+    test('should call axios', async () => {
+      await store.dispatch(actions.loadItem(fakeId));
+
       expect(axios.get).toHaveBeenCalledWith(`${listUrl}${fakeId}`);
+    });
+
+    test('the store should have an action with type LOAD_ITEM', async () => {
+      axios.get = jest.fn().mockResolvedValueOnce(fakeData);
+
+      await store.dispatch(actions.loadItem(fakeId));
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.LOAD_ITEM,
+        item: fakeData.data,
+      });
+    });
+
+    test('the store should have an action with type LOAD_ITEM_ERROR if promise rejected', async () => {
+      axios.get = jest.fn().mockRejectedValueOnce(fakeError);
+
+      await store.dispatch(actions.loadItem(fakeId));
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.LOAD_ITEM_ERROR,
+        error: fakeError,
+      });
     });
   });
 

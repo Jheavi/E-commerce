@@ -14,6 +14,13 @@ export function loadItemsSuccess(itemList) {
   };
 }
 
+export function loadItemsError(error) {
+  return {
+    type: actionTypes.LOAD_ITEMS_LIST_ERROR,
+    error,
+  };
+}
+
 export function loadItemsList() {
   return async (dispatch) => {
     try {
@@ -21,7 +28,7 @@ export function loadItemsList() {
 
       dispatch(loadItemsSuccess(itemList.data));
     } catch (error) {
-      console.log(error);
+      dispatch(loadItemsError(error));
     }
   };
 }
@@ -33,13 +40,21 @@ export function loadItemSuccess(item) {
   };
 }
 
+export function loadItemError(error) {
+  return {
+    type: actionTypes.LOAD_ITEM_ERROR,
+    error,
+  };
+}
+
 export function loadItem(itemId) {
   return async (dispatch) => {
     try {
       const item = await axios.get(`${listUrl}${itemId}`);
+
       dispatch(loadItemSuccess(item.data));
     } catch (error) {
-      console.log((error));
+      dispatch(loadItemError(error));
     }
   };
 }
@@ -51,6 +66,13 @@ export function loadCartSuccess(cartList) {
   };
 }
 
+export function loadCartError(error) {
+  return {
+    type: actionTypes.LOAD_SHOPPING_CART_ERROR,
+    error,
+  };
+}
+
 export function loadShoppingCart() {
   return async (dispatch) => {
     try {
@@ -58,7 +80,7 @@ export function loadShoppingCart() {
 
       dispatch(loadCartSuccess(cartList.data));
     } catch (error) {
-      console.log(error);
+      dispatch(loadCartError(error));
     }
   };
 }
@@ -67,6 +89,13 @@ export function putItemCartSuccess(cartItem) {
   return {
     type: actionTypes.PUT_ITEM_IN_CART,
     cartItem,
+  };
+}
+
+export function putItemCartError(error) {
+  return {
+    type: actionTypes.PUT_ITEM_IN_CART_ERROR,
+    error,
   };
 }
 
@@ -79,7 +108,7 @@ export function putItemInCart(item) {
 
       dispatch(putItemCartSuccess(newCartItem.data));
     } catch (error) {
-      console.log(error);
+      dispatch(putItemCartError(error));
     }
   };
 }
@@ -91,6 +120,13 @@ export function deleteItemCartSuccess(cartItem) {
   };
 }
 
+export function deleteItemCartError(error) {
+  return {
+    type: actionTypes.DELETE_ITEM_FROM_CART_ERROR,
+    error,
+  };
+}
+
 export function deleteItemFromCart(item) {
   return async (dispatch) => {
     try {
@@ -99,7 +135,7 @@ export function deleteItemFromCart(item) {
 
       dispatch(deleteItemCartSuccess(data));
     } catch (error) {
-      console.log(error);
+      dispatch(deleteItemCartError(error));
     }
   };
 }
