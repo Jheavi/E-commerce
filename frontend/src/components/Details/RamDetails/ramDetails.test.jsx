@@ -26,7 +26,7 @@ describe('ItemList', () => {
       </Provider>
     );
 
-    render(<Details match={{ params: { itemId: 1 } }} />, { wrapper: Wrapper });
+    render(<Details match={{ params: { itemId: '1' } }} />, { wrapper: Wrapper });
   });
 
   test('should render the ram capacity if product-type is "RAM Memory"', () => {

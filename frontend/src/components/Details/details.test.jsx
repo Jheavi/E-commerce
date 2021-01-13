@@ -27,19 +27,22 @@ describe('ItemList', () => {
       </Provider>
     );
 
-    render(<Details match={{ params: { itemId: 1 } }} />, { wrapper: Wrapper });
+    render(<Details match={{ params: { itemId: '2' } }} />, { wrapper: Wrapper });
   });
 
   test('should render the title', () => {
     expect(document.querySelector('.details__type').textContent).toBe('fakeType');
   });
 
-  test('should call loadItemsList action', () => {
+  test('should call loadItemsList action if the params.itemId is not the same at the item id loaded', () => {
     expect(loadItem).toHaveBeenCalled();
   });
 
   test('click "Add to cart" button should call putItemInCart action', () => {
-    document.querySelector('.add-to-cart-btn').click();
+    const addToCartBtn = document.querySelector('.add-to-cart-btn');
+
+    addToCartBtn.click();
+
     expect(putItemInCart).toHaveBeenCalled();
   });
 });
