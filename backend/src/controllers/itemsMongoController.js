@@ -1,67 +1,55 @@
 function itemsMongoController(itemSchema) {
-  function getMethod(req, res) {
-    const query = {};
-    const findCallback = (errorFindItems, items) => {
-      if (errorFindItems) {
-        res.send(errorFindItems);
-      } else {
-        res.json(items);
-      }
-    };
-    itemSchema.find(query, findCallback);
+  async function getMethod(req, res) {
+    try {
+      const query = {};
+
+      const items = await itemSchema.find(query);
+
+      res.send(items);
+    } catch (error) {
+      res.send(error);
+    }
   }
 
-  function postMethod(req, res) {
-    const item = req.body;
-    const createCallBack = (error, newItem) => {
-      if (error) {
-        res.send(error);
-      } else {
-        res.send(newItem);
-      }
-    };
-    itemSchema.create(item, createCallBack);
+  async function postMethod(req, res) {
+    try {
+      const item = req.body;
+      const newItem = await itemSchema.create(item);
+
+      res.send(newItem);
+    } catch (error) {
+      res.send(error);
+    }
   }
 
-  function deleteMethod(req, res) {
-    const item = req.body;
-    const query = { 'product-type': item['product-type'] };
-    const deleteCallback = (error) => {
-      if (error) {
-        res.send(error);
-      } else {
-        res.send('Deleted');
-      }
-    };
-    itemSchema.deleteMany(query, deleteCallback);
+  async function deleteMethod(req, res) {
+    try {
+      const item = req.body;
+      const query = { 'product-type': item['product-type'] };
+
+      await itemSchema.deleteMany(query);
+
+      res.send('Deleted');
+    } catch (error) {
+      res.send(error);
+    }
   }
 
-  function patchMethod(req, res) {
-    const item = req.body;
-    const query = { id: item.id };
-    const patchCallback = (error) => {
-      if (error) {
-        res.send(error);
-      } else {
-        res.send('Updated');
-      }
-    };
-    itemSchema.updateOne(query, { 'product-name': 'Caca' }, patchCallback);
-  }
+  async function getByIdMethod(req, res) {
+    try {
+      const { itemId } = req.params;
+      const query = { id: itemId };
 
-  function getByIdMethod(req, res) {
-    const { itemId } = req.params;
-    itemSchema.findOne({ id: itemId }, (errorFindItems, items) => {
-      if (errorFindItems) {
-        res.send(errorFindItems);
-      } else {
-        res.json(items);
-      }
-    });
+      const items = await itemSchema.findOne(query);
+
+      res.send(items);
+    } catch (error) {
+      res.send(error);
+    }
   }
 
   return {
-    getMethod, postMethod, deleteMethod, patchMethod, getByIdMethod,
+    getMethod, postMethod, deleteMethod, getByIdMethod,
   };
 }
 
