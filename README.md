@@ -32,7 +32,7 @@ MongoDB (using Mongoose)
 
 ## Unit & Component testing:
 
-[Frontend tests]() [Backend tests]()
+![Frontend tests](/frontend/public/frontend-tests.jpg) ![Backend tests](https://github.com/Jheavi/E-commerce/blob/main/frontend/public/backend-tests.jpg)
 
 Jest (More than 50 tests)
 You can run the tests with npm test (inside each folder [frontend, backend])
