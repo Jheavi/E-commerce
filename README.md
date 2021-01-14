@@ -32,7 +32,8 @@ MongoDB (using Mongoose)
 
 ## Unit & Component testing:
 
-![Frontend tests](/frontend/public/frontend-tests.jpg) ![Backend tests](https://github.com/Jheavi/E-commerce/blob/main/frontend/public/backend-tests.jpg)
+![Frontend tests](/frontend/public/frontend-tests.jpg) ![Backend tests](/frontend/public/backend-tests.jpg)
+![Frontend coverage](/frontend/public/frontend-coverage.jpg) ![Backend coverage](/frontend/public/backend-coverage.jpg)
 
 Jest (More than 50 tests)
 You can run the tests with npm test (inside each folder [frontend, backend])
@@ -43,3 +44,8 @@ EsLint (for good pratices & code styling)
 Axios
 react-router-dom
 react-redux
+
+## Other info
+The App uses personal DB (MongoDB) for loading the data.
+
+Javier
