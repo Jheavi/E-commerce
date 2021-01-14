@@ -97,59 +97,94 @@ describe('FrontEnd actions', () => {
     });
   });
 
-  describe('loadCartSuccess', () => {
-    test('should return action with type LOAD_SHOPPING_CART', () => {
-      expect(actions.loadCartSuccess(null).type).toBe(actionTypes.LOAD_SHOPPING_CART);
-    });
-  });
-
   describe('loadShoppingCart', () => {
-    beforeEach(async () => {
-      fakeData = { data: { id: 1 } };
-      axios.get.mockImplementationOnce(() => Promise.resolve(fakeData));
+    test('should call axios', async () => {
       await store.dispatch(actions.loadShoppingCart());
-    });
 
-    test('should call axios', () => {
       expect(axios.get).toHaveBeenCalledWith(shoppingCartUrl);
     });
-  });
 
-  describe('putItemCartSuccess', () => {
-    test('should return action with type PUT_ITEM_IN_CART', () => {
-      expect(actions.putItemCartSuccess(null).type).toBe(actionTypes.PUT_ITEM_IN_CART);
+    test('the store should have an action with type LOAD_SHOPPING_CART', async () => {
+      axios.get = jest.fn().mockResolvedValueOnce(fakeData);
+
+      await store.dispatch(actions.loadShoppingCart());
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.LOAD_SHOPPING_CART,
+        cartList: fakeData.data,
+      });
+    });
+
+    test('the store should have an action with type LOAD_SHOPPING_CART_error if promise rejected', async () => {
+      axios.get = jest.fn().mockRejectedValueOnce(fakeError);
+
+      await store.dispatch(actions.loadShoppingCart());
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.LOAD_SHOPPING_CART_ERROR,
+        error: fakeError,
+      });
     });
   });
 
   describe('putItemInCart', () => {
-    beforeEach(async () => {
-      fakeData = { data: { id: 1 } };
-      axios.patch.mockImplementationOnce(() => Promise.resolve(fakeData));
-      await store.dispatch(actions.putItemInCart(fakeData));
+    test('should call axios', async () => {
+      await store.dispatch(actions.putItemInCart({}));
+
+      expect(axios.patch).toHaveBeenCalledWith(shoppingCartUrl, { item: {} });
     });
 
-    test('should call axios', () => {
-      expect(axios.patch).toHaveBeenCalledWith(shoppingCartUrl, { item: fakeData });
-    });
-  });
+    test('the store should have an action with type PUT_ITEM_IN_CART', async () => {
+      axios.patch = jest.fn().mockResolvedValueOnce(fakeData);
 
-  describe('deleteItemCartSuccess', () => {
-    test('should return action with type DELETE_ITEM_FROM_CART', () => {
-      expect(actions.deleteItemCartSuccess(null).type).toBe(actionTypes.DELETE_ITEM_FROM_CART);
+      await store.dispatch(actions.putItemInCart({}));
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.PUT_ITEM_IN_CART,
+        cartItem: fakeData.data,
+      });
+    });
+
+    test('the store should have an action with type PUT_ITEM_IN_CART_ERROR if promise rejected', async () => {
+      axios.patch = jest.fn().mockRejectedValueOnce(fakeError);
+
+      await store.dispatch(actions.putItemInCart({}));
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.PUT_ITEM_IN_CART_ERROR,
+        error: fakeError,
+      });
     });
   });
 
   describe('deleteItemFromCart', () => {
-    let config;
-    beforeEach(async () => {
-      fakeData = { data: { id: 1 } };
-      config = { data: 'abc' };
-      axios.delete.mockImplementationOnce(() => Promise.resolve(fakeData));
-      await store.dispatch(actions.deleteItemFromCart('abc'));
+    test('should call axios', async () => {
+      const config = { data: {} };
+      await store.dispatch(actions.deleteItemFromCart({}));
+
+      expect(axios.delete).toHaveBeenCalledWith(shoppingCartUrl, config);
     });
 
-    test('should call axios', () => {
-      expect(axios.delete).toHaveBeenCalledWith(shoppingCartUrl, config);
+    test('the store should have an action with type DELETE_ITEM_FROM_CART', async () => {
+      axios.delete = jest.fn().mockResolvedValueOnce(fakeData);
+
+      await store.dispatch(actions.deleteItemFromCart({}));
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.DELETE_ITEM_FROM_CART,
+        cartItem: fakeData.data,
+      });
+    });
+
+    test('the store should have an action with type DELETE_ITEM_FROM_CART_ERROR if promise rejected', async () => {
+      axios.delete = jest.fn().mockRejectedValueOnce(fakeError);
+
+      await store.dispatch(actions.deleteItemFromCart({}));
+
+      expect(store.getActions()[0]).toEqual({
+        type: actionTypes.DELETE_ITEM_FROM_CART_ERROR,
+        error: fakeError,
+      });
     });
   });
 
