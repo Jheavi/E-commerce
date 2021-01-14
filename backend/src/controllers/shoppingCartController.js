@@ -1,34 +1,50 @@
 function shoppingCarController(cartItemSchema) {
-  function getMethod(req, res) {
-    const query = { };
-    const getCallBack = (error, cartList) => (error ? res.send(error) : res.send(cartList));
-    cartItemSchema.find(query)
-      .populate('product')
-      .exec(getCallBack);
+  async function getMethod(req, res) {
+    try {
+      const query = { };
+      const cartList = await cartItemSchema.find(query);
+
+      await cartList.populate('product').execPopulate();
+
+      res.send(cartList);
+    } catch (error) {
+      res.send(error);
+    }
   }
 
-  function patchMethod(req, res) {
-    const { item } = req.body;
-    const query = { product: item._id };
-    const update = { $inc: { quantity: 1 } };
-    const patchCallback = (error, newItem) => (error ? res.send(error) : res.send(newItem));
-    cartItemSchema.findOneAndUpdate(query, update, { upsert: true, new: true })
-      .populate('product')
-      .exec(patchCallback);
+  async function patchMethod(req, res) {
+    try {
+      const { item } = req.body;
+      const query = { product: item._id };
+      const update = { $inc: { quantity: 1 } };
+
+      const updatedItem = await cartItemSchema.findOneAndUpdate(
+        query,
+        update,
+        { upsert: true, new: true },
+      );
+      await updatedItem.populate('product').execPopulate();
+
+      res.send(updatedItem);
+    } catch (error) {
+      res.send(error);
+    }
   }
 
-  function deleteMethod(req, res) {
-    const item = req.body;
-    const query = { product: item._id };
-    const update = { $inc: { quantity: -1 } };
-    const deleteCallback = (error, deletedItem) => (
-      error
-        ? res.send(error)
-        : res.send(deletedItem)
-    );
-    cartItemSchema.findOneAndUpdate(query, update, { new: true })
-      .populate('product')
-      .exec(deleteCallback);
+  async function deleteMethod(req, res) {
+    try {
+      const item = req.body;
+      const query = { product: item._id };
+      const update = { $inc: { quantity: -1 } };
+
+      const deletedItem = await cartItemSchema.findOneAndUpdate(query, update, { new: true });
+
+      await deletedItem.populate('product').execPopulate();
+
+      res.send(deletedItem);
+    } catch (error) {
+      res.send(error);
+    }
   }
 
   return { getMethod, patchMethod, deleteMethod };

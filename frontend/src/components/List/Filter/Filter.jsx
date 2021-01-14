@@ -1,41 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { PropTypes } from 'prop-types';
 import { filterItems } from '../../../redux/actions/actions';
 import './filter.css';
 
-function Filter({ productTypes, actions }) {
-  const [filter] = useState(null);
-
+function Filter({ productTypes, dispatch }) {
   function resetFilters(inputCollection) {
     Array.prototype.forEach.call(inputCollection, (input) => {
       const inputBtn = input;
       inputBtn.checked = false;
     });
-    actions.filterItems(null);
+    dispatch(filterItems(null));
   }
   return (
-    <section className="filters">
-      {productTypes?.map((type) => (
-        <>
-          <input
-            type="radio"
-            key={performance.now()}
-            value={filter}
-            id={type}
-            className="filters__input mr-2"
-            name="filter-types"
-            onChange={(event) => {
-              actions.filterItems(event.target.id);
-              // setFilter(event.target.id);
-            }}
-          />
-          <label htmlFor={type} className="filters__label mr-5">{type}</label>
-        </>
-      ))}
-      {/* <button type="button" className="filters__button mr-3"
-      onClick={() => { actions.filterItems(filter); }}>Apply filters</button> */}
+    <section>
+      <ul className="filters">
+        {productTypes?.map((type) => (
+          <li key={Math.random() * Math.random()}>
+            <input
+              type="radio"
+              value={type}
+              id={type}
+              className="filters__input mr-2"
+              name="filter-types"
+              onChange={(event) => {
+                dispatch(filterItems(event.target.value));
+              }}
+            />
+            <label htmlFor={type} className="filters__label mr-5">{type}</label>
+          </li>
+        ))}
+      </ul>
       <button
         type="button"
         className="filters__button"
@@ -52,9 +47,7 @@ function Filter({ productTypes, actions }) {
 
 Filter.propTypes = {
   productTypes: PropTypes.arrayOf(PropTypes.string),
-  actions: PropTypes.shape({
-    filterItems: PropTypes.func.isRequired,
-  }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 Filter.defaultProps = {
@@ -68,8 +61,4 @@ function mapStateToProps({ itemsReducer }) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return { actions: bindActionCreators({ filterItems }, dispatch) };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
+export default connect(mapStateToProps)(Filter);
